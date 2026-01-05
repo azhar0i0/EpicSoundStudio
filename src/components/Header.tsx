@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,10 +18,10 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: "Home", href: "#" },
-    { name: "Features", href: "#features", hasDropdown: true },
-    { name: "About Us", href: "#about" },
-    { name: "Product", href: "#products" },
+    { name: "Home", href: "/" },
+    { name: "Features", href: "/#features", hasDropdown: true },
+    { name: "About Us", href: "/#about" },
+    { name: "Product", href: "/#products" },
   ];
 
   return (
@@ -32,9 +35,9 @@ const Header = () => {
       <div className="container-custom">
         <nav className="flex items-center justify-between">
           {/* Logo */}
-          <a href="#" className="text-2xl font-bold text-foreground">
+          <Link to="/" className="text-2xl font-bold text-foreground">
             Epic-Sound
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <ul className="hidden lg:flex items-center gap-8">
@@ -77,12 +80,12 @@ const Header = () => {
                     )}
                   </div>
                 ) : (
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className="text-foreground/80 hover:text-accent transition-colors font-medium"
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 )}
               </li>
             ))}
@@ -96,12 +99,17 @@ const Header = () => {
             <button className="p-2 hover:bg-secondary rounded-full transition-colors hidden sm:block">
               <Heart size={20} className="text-foreground/70" />
             </button>
-            <button className="p-2 hover:bg-secondary rounded-full transition-colors relative">
+            <Link
+              to="/cart"
+              className="p-2 hover:bg-secondary rounded-full transition-colors relative"
+            >
               <ShoppingCart size={20} className="text-foreground/70" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                2
-              </span>
-            </button>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs rounded-full flex items-center justify-center font-semibold animate-scale-in">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
 
             {/* Mobile menu button */}
             <button
@@ -119,13 +127,13 @@ const Header = () => {
             <ul className="space-y-4">
               {navItems.map((item) => (
                 <li key={item.name}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className="block text-foreground/80 hover:text-accent transition-colors font-medium py-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
