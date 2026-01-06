@@ -21,7 +21,7 @@ const Header = () => {
     { name: "Home", href: "/" },
     { name: "Features", href: "/#features", hasDropdown: true },
     { name: "About Us", href: "/#about" },
-    { name: "Product", href: "/#products" },
+    { name: "Products", href: "/products" },
   ];
 
   return (
