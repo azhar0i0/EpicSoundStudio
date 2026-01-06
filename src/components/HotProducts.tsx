@@ -1,4 +1,5 @@
 import { Star, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import headphoneImg from "@/assets/headphone.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useState, useRef, useEffect } from "react";
@@ -106,6 +107,9 @@ const HotProducts = () => {
             <br />
             Hot <span className="text-accent">Products</span>
           </h2>
+          <Link to="/products" className="text-accent hover:underline font-medium hidden sm:block">
+            View All Products →
+          </Link>
           <div className="flex gap-2">
             <button
               onClick={prevSlide}
@@ -152,15 +156,19 @@ const HotProducts = () => {
                       : "bg-muted"
                   }`}
                 >
-                  <img
-                    src={headphoneImg}
-                    alt={product.name}
-                    className="w-40 lg:w-48 object-contain group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_15px_30px_rgba(0,0,0,0.2)]"
-                  />
+                  <Link to={`/product/${product.id}`}>
+                    <img
+                      src={headphoneImg}
+                      alt={product.name}
+                      className="w-40 lg:w-48 object-contain group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_15px_30px_rgba(0,0,0,0.2)]"
+                    />
+                  </Link>
                 </div>
 
                 {/* Product Info */}
-                <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                <Link to={`/product/${product.id}`}>
+                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-colors">{product.name}</h3>
+                </Link>
 
                 {/* Rating */}
                 <div className="flex gap-1 mb-3">
