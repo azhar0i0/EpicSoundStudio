@@ -1,26 +1,101 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Star, ShoppingCart, Heart, Filter, Grid, List, ChevronDown } from "lucide-react";
+import {
+  Star,
+  ShoppingCart,
+  Heart,
+  Filter,
+  Grid,
+  List,
+  ChevronDown,
+  Search,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import headphoneImg from "@/assets/headphone.png";
 
-const allProducts = [
-  { id: 1, name: "Unique Headphone", price: 199, rating: 5, category: "Wireless", color: "Olive Green", badge: "Best Seller" },
-  { id: 2, name: "Colored Headphones", price: 149, rating: 4, category: "Wireless", color: "Rose Gold", badge: null },
-  { id: 3, name: "Modern Headphone", price: 249, rating: 5, category: "Premium", color: "Midnight Black", badge: "New" },
-  { id: 4, name: "Classic Headphone", price: 129, rating: 4, category: "Wired", color: "Vintage Brown", badge: null },
-  { id: 5, name: "Sport Headphone", price: 179, rating: 5, category: "Sport", color: "Electric Blue", badge: "Popular" },
-  { id: 6, name: "Studio Headphone", price: 299, rating: 5, category: "Professional", color: "Platinum Silver", badge: "Pro" },
-  { id: 7, name: "Gaming Headphone", price: 189, rating: 4, category: "Gaming", color: "Neon Green", badge: null },
-  { id: 8, name: "Kids Headphone", price: 79, rating: 4, category: "Kids", color: "Candy Pink", badge: "Safe" },
-  { id: 9, name: "Travel Headphone", price: 159, rating: 5, category: "Travel", color: "Charcoal Gray", badge: null },
-];
+// Generate 50 demo products
+const generateProducts = () => {
+  const categories = [
+    "Wireless",
+    "Wired",
+    "Premium",
+    "Sport",
+    "Professional",
+    "Gaming",
+    "Kids",
+    "Travel",
+  ];
+  const colors = [
+    "Olive Green",
+    "Rose Gold",
+    "Midnight Black",
+    "Vintage Brown",
+    "Electric Blue",
+    "Platinum Silver",
+    "Neon Green",
+    "Candy Pink",
+    "Charcoal Gray",
+    "Arctic White",
+  ];
+  const badges = ["Best Seller", "New", "Popular", "Pro", "Safe", null];
+  const adjectives = [
+    "Premium",
+    "Ultra",
+    "Pro",
+    "Elite",
+    "Classic",
+    "Modern",
+    "Vintage",
+    "Studio",
+    "Sport",
+    "Gaming",
+  ];
+  const nouns = [
+    "Headphone",
+    "Earbuds",
+    "Headset",
+    "Audio",
+    "Sound",
+    "Bass",
+    "Beats",
+    "Rhythm",
+  ];
 
-const categories = ["All", "Wireless", "Wired", "Premium", "Sport", "Professional", "Gaming", "Kids", "Travel"];
-const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low", "Rating", "Newest"];
+  return Array.from({ length: 50 }, (_, i) => ({
+    id: i + 1,
+    name: `${adjectives[i % adjectives.length]} ${nouns[i % nouns.length]} ${i + 1}`,
+    price: Math.floor(Math.random() * 250) + 50,
+    rating: Math.floor(Math.random() * 2) + 4,
+    category: categories[i % categories.length],
+    color: colors[i % colors.length],
+    badge: badges[i % badges.length],
+  }));
+};
+
+const allProducts = generateProducts();
+const categories = [
+  "All",
+  "Wireless",
+  "Wired",
+  "Premium",
+  "Sport",
+  "Professional",
+  "Gaming",
+  "Kids",
+  "Travel",
+];
+const sortOptions = [
+  "Featured",
+  "Price: Low to High",
+  "Price: High to Low",
+  "Rating",
+  "Newest",
+];
+const ITEMS_PER_PAGE = 9;
 
 const AllProducts = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -29,60 +104,126 @@ const AllProducts = () => {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { addToCart } = useCart();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredProducts = allProducts
-    .filter(p => selectedCategory === "All" || p.category === selectedCategory)
-    .filter(p => p.price >= priceRange[0] && p.price <= priceRange[1])
-    .sort((a, b) => {
-      if (sortBy === "Price: Low to High") return a.price - b.price;
-      if (sortBy === "Price: High to Low") return b.price - a.price;
-      if (sortBy === "Rating") return b.rating - a.rating;
-      return 0;
-    });
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, sortBy, priceRange, searchQuery]);
+
+  const filteredProducts = useMemo(() => {
+    return allProducts
+      .filter(
+        (p) => selectedCategory === "All" || p.category === selectedCategory
+      )
+      .filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1])
+      .filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.color.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => {
+        if (sortBy === "Price: Low to High") return a.price - b.price;
+        if (sortBy === "Price: High to Low") return b.price - a.price;
+        if (sortBy === "Rating") return b.rating - a.rating;
+        return 0;
+      });
+  }, [selectedCategory, sortBy, priceRange, searchQuery]);
+
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const toggleWishlist = (id: number) => {
-    setWishlist(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    setWishlist((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
-  const handleAddToCart = (product: typeof allProducts[0]) => {
+  const handleAddToCart = (product: (typeof allProducts)[0]) => {
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: headphoneImg
+      image: headphoneImg,
     });
+  };
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, "...", totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
+      } else {
+        pages.push(
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages
+        );
+      }
+    }
+    return pages;
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       {/* Hero Banner */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary/20" />
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div
+            className="absolute bottom-10 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
         </div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+            <Link to="/" className="hover:text-primary transition-colors">
+              Home
+            </Link>
             <span>/</span>
             <span className="text-foreground">All Products</span>
           </nav>
-          
+
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-4">
               Our <span className="text-primary">Premium</span> Collection
             </h1>
             <p className="text-lg text-muted-foreground">
-              Discover the perfect headphones for every moment. From studio sessions to gym workouts, we have you covered.
+              Discover the perfect headphones for every moment. From studio
+              sessions to gym workouts, we have you covered.
             </p>
           </div>
         </div>
@@ -91,13 +232,15 @@ const AllProducts = () => {
       <section className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
-          <aside className={`lg:w-72 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <aside
+            className={`lg:w-72 space-y-6 ${showFilters ? "block" : "hidden lg:block"}`}
+          >
             <div className="bg-card rounded-2xl p-6 border border-border sticky top-24">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Filter className="w-5 h-5" />
                 Filters
               </h3>
-              
+
               {/* Categories */}
               <div className="mb-6">
                 <h4 className="font-medium mb-3">Categories</h4>
@@ -107,9 +250,9 @@ const AllProducts = () => {
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
                       className={`w-full text-left px-4 py-2 rounded-xl transition-all ${
-                        selectedCategory === cat 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                        selectedCategory === cat
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {cat}
@@ -125,7 +268,9 @@ const AllProducts = () => {
                   <input
                     type="number"
                     value={priceRange[0]}
-                    onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                    onChange={(e) =>
+                      setPriceRange([Number(e.target.value), priceRange[1]])
+                    }
                     className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                     placeholder="Min"
                   />
@@ -133,7 +278,9 @@ const AllProducts = () => {
                   <input
                     type="number"
                     value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                    onChange={(e) =>
+                      setPriceRange([priceRange[0], Number(e.target.value)])
+                    }
                     className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                     placeholder="Max"
                   />
@@ -145,13 +292,21 @@ const AllProducts = () => {
                 <h4 className="font-medium mb-3">Rating</h4>
                 <div className="space-y-2">
                   {[5, 4, 3].map((rating) => (
-                    <button key={rating} className="w-full flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muted transition-colors">
+                    <button
+                      key={rating}
+                      className="w-full flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muted transition-colors"
+                    >
                       <div className="flex items-center gap-0.5">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
+                          />
                         ))}
                       </div>
-                      <span className="text-sm text-muted-foreground">& up</span>
+                      <span className="text-sm text-muted-foreground">
+                        & up
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -163,21 +318,45 @@ const AllProducts = () => {
           <div className="flex-1">
             {/* Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-card rounded-2xl p-4 border border-border">
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <Button
+                  variant="outline"
                   size="sm"
-                  className="lg:hidden"
+                  className="lg:hidden shrink-0"
                   onClick={() => setShowFilters(!showFilters)}
                 >
                   <Filter className="w-4 h-4 mr-2" />
                   Filters
                 </Button>
-                <span className="text-muted-foreground text-sm">
-                  Showing <span className="text-foreground font-medium">{filteredProducts.length}</span> products
+
+                {/* Search Input */}
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full pl-10 pr-10 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <span className="text-muted-foreground text-sm hidden sm:block shrink-0">
+                  <span className="text-foreground font-medium">
+                    {filteredProducts.length}
+                  </span>{" "}
+                  products found
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 {/* Sort Dropdown */}
                 <div className="relative">
@@ -187,7 +366,9 @@ const AllProducts = () => {
                     className="appearance-none bg-background border border-border rounded-xl px-4 py-2 pr-10 text-sm cursor-pointer hover:border-primary transition-colors"
                   >
                     {sortOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -197,13 +378,13 @@ const AllProducts = () => {
                 <div className="flex items-center border border-border rounded-xl overflow-hidden">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 transition-colors ${viewMode === "grid" ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                    className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                   >
                     <Grid className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 transition-colors ${viewMode === "list" ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                    className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                   >
                     <List className="w-5 h-5" />
                   </button>
@@ -212,102 +393,171 @@ const AllProducts = () => {
             </div>
 
             {/* Products */}
-            <div className={viewMode === "grid" 
-              ? "grid md:grid-cols-2 xl:grid-cols-3 gap-6" 
-              : "space-y-4"
-            }>
-              {filteredProducts.map((product, index) => (
-                <div 
-                  key={product.id}
-                  className={`group bg-card rounded-3xl border border-border hover:border-primary/50 hover:shadow-2xl transition-all duration-500 overflow-hidden animate-fade-in ${
-                    viewMode === "list" ? "flex" : ""
-                  }`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
+            {paginatedProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg">
+                  No products found matching your criteria.
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategory("All");
+                    setPriceRange([0, 500]);
+                  }}
                 >
-                  {/* Product Image */}
-                  <div className={`relative bg-gradient-to-br from-primary/5 to-secondary/20 overflow-hidden ${
-                    viewMode === "list" ? "w-48 shrink-0" : "p-8"
-                  }`}>
-                    <Link to={`/product/${product.id}`}>
-                      <img 
-                        src={headphoneImg} 
-                        alt={product.name}
-                        className={`drop-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ${
-                          viewMode === "list" ? "w-full h-full object-contain p-4" : "w-full max-w-[180px] mx-auto"
-                        }`}
-                      />
-                    </Link>
-                    
-                    {/* Badge */}
-                    {product.badge && (
-                      <span className="absolute top-4 left-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
-                        {product.badge}
-                      </span>
-                    )}
-                    
-                    {/* Quick Actions */}
-                    <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => toggleWishlist(product.id)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                          wishlist.includes(product.id) 
-                            ? 'bg-red-500 text-white' 
-                            : 'bg-card/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground'
-                        }`}
-                      >
-                        <Heart className={`w-5 h-5 ${wishlist.includes(product.id) ? 'fill-current' : ''}`} />
-                      </button>
-                    </div>
-                  </div>
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid md:grid-cols-2 xl:grid-cols-3 gap-6"
+                    : "space-y-4"
+                }
+              >
+                {paginatedProducts.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className={`group bg-card rounded-3xl border border-border hover:border-primary/50 hover:shadow-2xl transition-all duration-500 overflow-hidden animate-fade-in ${
+                      viewMode === "list" ? "flex" : ""
+                    }`}
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    {/* Product Image */}
+                    <div
+                      className={`relative bg-gradient-to-br from-primary/5 to-secondary/20 overflow-hidden ${
+                        viewMode === "list" ? "w-48 shrink-0" : "p-8"
+                      }`}
+                    >
+                      <Link to={`/product/${product.id}`}>
+                        <img
+                          src={headphoneImg}
+                          alt={product.name}
+                          className={`drop-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ${
+                            viewMode === "list"
+                              ? "w-full h-full object-contain p-4"
+                              : "w-full max-w-[180px] mx-auto"
+                          }`}
+                        />
+                      </Link>
 
-                  {/* Product Info */}
-                  <div className={`p-6 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}>
-                    <div className="flex items-center gap-1 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
-                      ))}
-                      <span className="text-xs text-muted-foreground ml-1">({product.rating}.0)</span>
-                    </div>
-                    
-                    <Link to={`/product/${product.id}`}>
-                      <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">{product.name}</h3>
-                    </Link>
-                    <p className="text-sm text-muted-foreground mb-3">{product.category} • {product.color}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-2xl font-bold text-foreground">${product.price}</span>
-                        <span className="text-sm text-muted-foreground line-through ml-2">${Math.round(product.price * 1.3)}</span>
+                      {/* Badge */}
+                      {product.badge && (
+                        <span className="absolute top-4 left-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                          {product.badge}
+                        </span>
+                      )}
+
+                      {/* Quick Actions */}
+                      <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => toggleWishlist(product.id)}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                            wishlist.includes(product.id)
+                              ? "bg-red-500 text-white"
+                              : "bg-card/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground"
+                          }`}
+                        >
+                          <Heart
+                            className={`w-5 h-5 ${wishlist.includes(product.id) ? "fill-current" : ""}`}
+                          />
+                        </button>
                       </div>
-                      <Button 
-                        onClick={() => handleAddToCart(product)}
-                        size="sm" 
-                        className="rounded-full gap-2"
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span className="hidden sm:inline">Add</span>
-                      </Button>
+                    </div>
+
+                    {/* Product Info */}
+                    <div
+                      className={`p-6 ${viewMode === "list" ? "flex-1 flex flex-col justify-center" : ""}`}
+                    >
+                      <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < product.rating ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
+                          />
+                        ))}
+                        <span className="text-xs text-muted-foreground ml-1">
+                          ({product.rating}.0)
+                        </span>
+                      </div>
+
+                      <Link to={`/product/${product.id}`}>
+                        <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">
+                          {product.name}
+                        </h3>
+                      </Link>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {product.category} • {product.color}
+                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-2xl font-bold text-foreground">
+                            ${product.price}
+                          </span>
+                          <span className="text-sm text-muted-foreground line-through ml-2">
+                            ${Math.round(product.price * 1.3)}
+                          </span>
+                        </div>
+                        <Button
+                          onClick={() => handleAddToCart(product)}
+                          size="sm"
+                          className="rounded-full gap-2"
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          <span className="hidden sm:inline">Add</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Pagination */}
-            <div className="flex items-center justify-center gap-2 mt-12">
-              <Button variant="outline" className="rounded-full">Previous</Button>
-              {[1, 2, 3].map((page) => (
-                <Button 
-                  key={page}
-                  variant={page === 1 ? "default" : "outline"} 
-                  size="icon" 
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-12">
+                <Button
+                  variant="outline"
                   className="rounded-full"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
                 >
-                  {page}
+                  Previous
                 </Button>
-              ))}
-              <Button variant="outline" className="rounded-full">Next</Button>
-            </div>
+                {getPageNumbers().map((page, index) =>
+                  page === "..." ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-2 text-muted-foreground"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      size="icon"
+                      className="rounded-full"
+                      onClick={() => goToPage(page as number)}
+                    >
+                      {page}
+                    </Button>
+                  )
+                )}
+                <Button
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -2,7 +2,7 @@ import { Star, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import headphoneImg from "@/assets/headphone.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 
@@ -11,36 +11,36 @@ const products = [
     id: 1,
     name: "Unique Headphone",
     price: 20.5,
-    rating: 4,
-    color: "peach",
+    rating: 5,
+    bgColor: "bg-yellow-200",
   },
   {
     id: 2,
     name: "Colored Headphones",
     price: 36.5,
     rating: 5,
-    color: "accent",
+    bgColor: "bg-pink-200",
   },
   {
     id: 3,
     name: "Modern Headphone",
     price: 24.0,
-    rating: 4,
-    color: "sand",
+    rating: 5,
+    bgColor: "bg-gray-200",
   },
   {
     id: 4,
     name: "Classic Headphone",
     price: 28.0,
     rating: 5,
-    color: "peach",
+    bgColor: "bg-blue-200",
   },
   {
     id: 5,
     name: "Pro Headphone",
     price: 45.0,
     rating: 5,
-    color: "accent",
+    bgColor: "bg-green-200",
   },
 ];
 
@@ -49,7 +49,6 @@ const HotProducts = () => {
   const { addToCart } = useCart();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -76,7 +75,7 @@ const HotProducts = () => {
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
   };
 
-  const handleAddToCart = (product: typeof products[0]) => {
+  const handleAddToCart = (product: (typeof products)[0]) => {
     addToCart({
       id: product.id,
       name: product.name,
@@ -107,31 +106,28 @@ const HotProducts = () => {
             <br />
             Hot <span className="text-accent">Products</span>
           </h2>
-          <Link to="/products" className="text-accent hover:underline font-medium hidden sm:block">
-            View All Products →
-          </Link>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={prevSlide}
               disabled={currentIndex === 0}
-              className="w-10 h-10 rounded-full bg-background shadow-soft flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:text-foreground"
+              className="w-12 h-12 rounded-full border-2 border-accent text-accent flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-accent"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={nextSlide}
               disabled={currentIndex >= maxIndex}
-              className="w-10 h-10 rounded-full bg-accent text-accent-foreground shadow-soft flex items-center justify-center hover:scale-110 transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-12 h-12 rounded-full bg-accent text-accent-foreground flex items-center justify-center hover:scale-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <ChevronRight size={20} />
             </button>
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div ref={containerRef} className="overflow-hidden">
+        {/* Products Grid - Matching Reference Design */}
+        <div className="overflow-hidden">
           <div
-            className="grid gap-6 lg:gap-8 transition-all duration-500"
+            className="grid gap-8 lg:gap-12"
             style={{
               gridTemplateColumns: `repeat(${itemsPerPage}, 1fr)`,
             }}
@@ -139,39 +135,37 @@ const HotProducts = () => {
             {visibleProducts.map((product, index) => (
               <div
                 key={product.id}
-                className={`group bg-card rounded-3xl p-6 shadow-soft hover-lift transition-all duration-500 ${
+                className={`group text-center transition-all duration-500 ${
                   isVisible
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
                 }`}
                 style={{ transitionDelay: `${(index + 1) * 150}ms` }}
               >
-                {/* Product Image */}
-                <div
-                  className={`relative h-48 lg:h-56 mb-6 rounded-2xl flex items-center justify-center ${
-                    product.color === "peach"
-                      ? "bg-secondary"
-                      : product.color === "accent"
-                      ? "bg-secondary/80"
-                      : "bg-muted"
-                  }`}
-                >
-                  <Link to={`/product/${product.id}`}>
-                    <img
-                      src={headphoneImg}
-                      alt={product.name}
-                      className="w-40 lg:w-48 object-contain group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_15px_30px_rgba(0,0,0,0.2)]"
-                    />
-                  </Link>
+                {/* Product Image - Circular Background */}
+                <div className="relative mb-6 flex justify-center">
+                  <div
+                    className={`relative w-48 h-48 lg:w-56 lg:h-56 ${product.bgColor} rounded-full flex items-center justify-center`}
+                  >
+                    <Link to={`/product/${product.id}`}>
+                      <img
+                        src={headphoneImg}
+                        alt={product.name}
+                        className="w-36 lg:w-44 object-contain group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)]"
+                      />
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Product Info */}
                 <Link to={`/product/${product.id}`}>
-                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-colors">{product.name}</h3>
+                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-colors">
+                    {product.name}
+                  </h3>
                 </Link>
 
                 {/* Rating */}
-                <div className="flex gap-1 mb-3">
+                <div className="flex justify-center gap-0.5 mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
@@ -186,16 +180,16 @@ const HotProducts = () => {
                 </div>
 
                 {/* Price and Add to Cart */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-center gap-4">
                   <span className="text-xl font-bold">
                     ${product.price.toFixed(2)}
                   </span>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 hover:shadow-glow transition-all"
+                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-xs font-semibold hover:scale-105 hover:shadow-glow transition-all"
                   >
-                    <ShoppingCart size={16} />
-                    Add to Cart
+                    Add To Cart
+                    <ShoppingCart size={14} />
                   </button>
                 </div>
               </div>
@@ -203,19 +197,14 @@ const HotProducts = () => {
           </div>
         </div>
 
-        {/* Pagination dots */}
-        <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === currentIndex
-                  ? "w-8 bg-accent"
-                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-              }`}
-            />
-          ))}
+        {/* View All Link */}
+        <div className="flex justify-center mt-10">
+          <Link
+            to="/products"
+            className="text-accent hover:underline font-medium"
+          >
+            View All Products →
+          </Link>
         </div>
       </div>
     </section>

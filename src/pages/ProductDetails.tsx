@@ -73,41 +73,41 @@ const ProductDetails = () => {
       </div>
 
       {/* Product Section */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+      <section className="container mx-auto px-4 py-4 sm:py-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Product Image */}
           <div className="relative">
-            <div className="relative bg-gradient-to-br from-primary/10 to-secondary/30 rounded-3xl p-12 overflow-hidden group">
+            <div className="relative bg-gradient-to-br from-primary/10 to-secondary/30 rounded-2xl sm:rounded-3xl p-6 sm:p-12 overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent opacity-50" />
               <img 
                 src={headphoneImg} 
                 alt={product.name}
-                className="relative z-10 w-full max-w-md mx-auto drop-shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500"
+                className="relative z-10 w-full max-w-xs sm:max-w-md mx-auto drop-shadow-2xl transform group-hover:scale-105 group-hover:rotate-3 transition-all duration-500"
               />
               
               {/* Floating badges */}
-              <div className="absolute top-6 left-6 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+              <div className="absolute top-3 left-3 sm:top-6 sm:left-6 bg-accent text-accent-foreground px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold animate-pulse">
                 Best Seller
               </div>
-              <div className="absolute bottom-6 right-6 bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+              <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 bg-card/90 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
                 ⭐ {product.rating}.0 Rating
               </div>
             </div>
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div>
-              <p className="text-primary font-medium mb-2">Epic-Sound Premium Collection</p>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">{product.name}</h1>
-              <div className="flex items-center gap-4">
+              <p className="text-primary font-medium mb-2 text-sm sm:text-base">Epic-Sound Premium Collection</p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-foreground mb-3 sm:mb-4">{product.name}</h1>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-5 h-5 ${i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
+                    <Star key={i} className={`w-4 h-4 sm:w-5 sm:h-5 ${i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
                   ))}
                 </div>
-                <span className="text-muted-foreground">(128 reviews)</span>
-                <span className="text-primary font-medium">In Stock</span>
+                <span className="text-muted-foreground text-sm">(128 reviews)</span>
+                <span className="text-primary font-medium text-sm">In Stock</span>
               </div>
             </div>
 
@@ -133,39 +133,39 @@ const ProductDetails = () => {
             </div>
 
             {/* Quantity & Add to Cart */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <div className="flex items-center border border-border rounded-full">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 flex items-center justify-center text-xl hover:bg-muted transition-colors rounded-l-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-xl hover:bg-muted transition-colors rounded-l-full"
                 >
                   -
                 </button>
-                <span className="w-12 text-center font-medium">{quantity}</span>
+                <span className="w-10 sm:w-12 text-center font-medium">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-12 h-12 flex items-center justify-center text-xl hover:bg-muted transition-colors rounded-r-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-xl hover:bg-muted transition-colors rounded-r-full"
                 >
                   +
                 </button>
               </div>
-              <Button onClick={handleAddToCart} size="lg" className="flex-1 h-12 text-lg gap-2 rounded-full">
-                <ShoppingCart className="w-5 h-5" />
+              <Button onClick={handleAddToCart} size="lg" className="flex-1 min-w-[140px] h-10 sm:h-12 text-base sm:text-lg gap-2 rounded-full">
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 Add to Cart
               </Button>
               <button 
                 onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all ${isWishlisted ? 'bg-red-500 border-red-500 text-white' : 'border-border hover:border-primary'}`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center transition-all shrink-0 ${isWishlisted ? 'bg-red-500 border-red-500 text-white' : 'border-border hover:border-primary'}`}
               >
-                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isWishlisted ? 'fill-current' : ''}`} />
               </button>
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-border">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Truck className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
                   <p className="font-medium text-sm">Free Shipping</p>
@@ -173,8 +173,8 @@ const ProductDetails = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
                   <p className="font-medium text-sm">2 Year Warranty</p>
@@ -182,8 +182,8 @@ const ProductDetails = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Headphones className="w-6 h-6 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Headphones className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
                   <p className="font-medium text-sm">24/7 Support</p>
@@ -345,27 +345,27 @@ const ProductDetails = () => {
           </Link>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {relatedProducts.map((item) => (
             <Link 
               key={item.id} 
               to={`/product/${item.id}`}
-              className="group bg-card rounded-3xl p-6 border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-300"
+              className="group bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-300"
             >
-              <div className="relative bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl p-8 mb-4 overflow-hidden">
+              <div className="relative bg-gradient-to-br from-primary/5 to-secondary/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-4 overflow-hidden">
                 <img 
                   src={headphoneImg} 
                   alt={item.name}
-                  className="w-full max-w-[200px] mx-auto drop-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
+                  className="w-full max-w-[140px] sm:max-w-[200px] mx-auto drop-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
                 />
               </div>
               <div className="flex items-center gap-1 mb-2">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-4 h-4 ${i < item.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
+                  <Star key={i} className={`w-3 h-3 sm:w-4 sm:h-4 ${i < item.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
                 ))}
               </div>
-              <h3 className="font-bold text-lg mb-1">{item.name}</h3>
-              <p className="text-primary font-bold text-xl">${item.price}</p>
+              <h3 className="font-bold text-base sm:text-lg mb-1">{item.name}</h3>
+              <p className="text-primary font-bold text-lg sm:text-xl">${item.price}</p>
             </Link>
           ))}
         </div>
