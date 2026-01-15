@@ -135,23 +135,27 @@ const HotProducts = () => {
             {visibleProducts.map((product, index) => (
               <div
                 key={product.id}
-                className={`group text-center transition-all duration-500 ${
+                className={`group text-center transition-all duration-700 ease-out ${
                   isVisible
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-10"
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-16 scale-95"
                 }`}
                 style={{ transitionDelay: `${(index + 1) * 150}ms` }}
               >
                 {/* Product Image - Circular Background */}
-                <div className="relative mb-6 flex justify-center">
+                <div className="relative mb-6 flex justify-center perspective-1000">
                   <div
-                    className={`relative w-48 h-48 lg:w-56 lg:h-56 ${product.bgColor} rounded-full flex items-center justify-center`}
+                    className={`relative w-48 h-48 lg:w-56 lg:h-56 ${product.bgColor} rounded-full flex items-center justify-center transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-accent/20`}
                   >
-                    <Link to={`/product/${product.id}`}>
+                    {/* Animated ring on hover */}
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-accent/30 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
+                    <div className="absolute inset-2 rounded-full border-2 border-transparent group-hover:border-accent/20 transition-all duration-700 group-hover:scale-105 group-hover:-rotate-6" />
+                    
+                    <Link to={`/product/${product.id}`} className="relative z-10">
                       <img
                         src={headphoneImg}
                         alt={product.name}
-                        className="w-36 lg:w-44 object-contain group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)]"
+                        className="w-36 lg:w-44 object-contain transition-all duration-700 ease-out drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)] group-hover:scale-115 group-hover:rotate-12 group-hover:drop-shadow-[0_25px_50px_rgba(0,0,0,0.25)]"
                       />
                     </Link>
                   </div>
@@ -159,37 +163,38 @@ const HotProducts = () => {
 
                 {/* Product Info */}
                 <Link to={`/product/${product.id}`}>
-                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-colors">
+                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-all duration-300 group-hover:scale-105">
                     {product.name}
                   </h3>
                 </Link>
 
                 {/* Rating */}
-                <div className="flex justify-center gap-0.5 mb-3">
+                <div className="flex justify-center gap-0.5 mb-3 transition-transform duration-500 group-hover:scale-110">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       size={14}
-                      className={
+                      className={`transition-all duration-300 ${
                         i < product.rating
                           ? "fill-accent text-accent"
                           : "text-muted"
-                      }
+                      }`}
+                      style={{ transitionDelay: `${i * 50}ms` }}
                     />
                   ))}
                 </div>
 
                 {/* Price and Add to Cart */}
-                <div className="flex items-center justify-center gap-4">
-                  <span className="text-xl font-bold">
+                <div className="flex items-center justify-center gap-4 transition-all duration-500 group-hover:gap-5">
+                  <span className="text-xl font-bold transition-all duration-300 group-hover:text-accent group-hover:scale-110">
                     ${product.price.toFixed(2)}
                   </span>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-xs font-semibold hover:scale-105 hover:shadow-glow transition-all"
+                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 hover:scale-110 hover:shadow-glow active:scale-95 group-hover:px-5"
                   >
                     Add To Cart
-                    <ShoppingCart size={14} />
+                    <ShoppingCart size={14} className="transition-transform duration-300 group-hover:rotate-12" />
                   </button>
                 </div>
               </div>

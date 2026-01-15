@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import headphoneImg from "@/assets/headphone.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { ArrowRight } from "lucide-react";
@@ -23,9 +24,12 @@ const FeaturesSection = () => {
             <br />
             Product
           </h2>
-          <button className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-transform shadow-lg">
+          <Link
+            to="/explore"
+            className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-transform shadow-lg"
+          >
             View All
-          </button>
+          </Link>
         </div>
 
         {/* Bento Grid Layout */}
@@ -52,13 +56,16 @@ const FeaturesSection = () => {
                   Typesetting Industry. Lorem Ipsum Has Been The Industry's
                   Standard Dummy Text Ever Since The 1500s.
                 </p>
-                <button className="group/btn flex items-center gap-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-all shadow-lg">
+                <Link
+                  to="/explore"
+                  className="group/btn flex items-center gap-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-all shadow-lg"
+                >
                   Learn More
                   <ArrowRight
                     size={16}
                     className="group-hover/btn:translate-x-1 transition-transform"
                   />
-                </button>
+                </Link>
               </div>
 
               {/* Image with number */}
@@ -131,13 +138,16 @@ const FeaturesSection = () => {
                     <br />
                     Bluetooth
                   </h3>
-                  <button className="group/btn flex items-center gap-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-all shadow-lg">
+                  <Link
+                    to="/explore"
+                    className="group/btn flex items-center gap-2 bg-accent text-accent-foreground px-5 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-all shadow-lg"
+                  >
                     Learn More
                     <ArrowRight
                       size={16}
                       className="group-hover/btn:translate-x-1 transition-transform"
                     />
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Image with number */}

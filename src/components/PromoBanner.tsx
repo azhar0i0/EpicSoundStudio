@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import headphoneImg from "@/assets/headphone.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
@@ -56,13 +57,16 @@ const PromoBanner = () => {
                 Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
                 eget.
               </p>
-              <button className="group flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-full font-semibold shadow-glow hover:scale-105 transition-all duration-300">
+              <Link
+                to="/explore"
+                className="group flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-full font-semibold shadow-glow hover:scale-105 transition-all duration-300"
+              >
                 Explore More
                 <ArrowRight
                   size={18}
                   className="group-hover:translate-x-1 transition-transform"
                 />
-              </button>
+              </Link>
             </div>
           </div>
         </div>

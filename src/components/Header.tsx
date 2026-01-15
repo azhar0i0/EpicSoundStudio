@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
   const { totalItems } = useCart();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Enable smooth scroll on hash navigation
+  useSmoothScroll();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +22,29 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    // Check if it's a hash link
+    if (href.includes("#")) {
+      e.preventDefault();
+      const [path, hash] = href.split("#");
+
+      if (location.pathname === "/" || path === "/") {
+        // We're on the home page, just scroll to section
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        // Navigate to home page with hash
+        navigate(href);
+      }
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -82,6 +111,7 @@ const Header = () => {
                 ) : (
                   <Link
                     to={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className="text-foreground/80 hover:text-accent transition-colors font-medium"
                   >
                     {item.name}
@@ -129,8 +159,8 @@ const Header = () => {
                 <li key={item.name}>
                   <Link
                     to={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className="block text-foreground/80 hover:text-accent transition-colors font-medium py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.name}
                   </Link>
