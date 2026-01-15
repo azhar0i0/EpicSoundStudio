@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Star, Heart, ShoppingCart, Truck, Shield, Headphones, Volume2, Battery, Bluetooth, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import headphoneImg from "@/assets/headphone.png";
@@ -27,13 +28,14 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [currentReviewPage, setCurrentReviewPage] = useState(0);
 
   const product = products.find(p => p.id === Number(id)) || products[0];
   const relatedProducts = products.filter(p => p.id !== product.id).slice(0, 3);
+  const isWishlisted = isInWishlist(product.id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -154,7 +156,12 @@ const ProductDetails = () => {
                 Add to Cart
               </Button>
               <button 
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={() => toggleWishlist({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: headphoneImg,
+                })}
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center transition-all shrink-0 ${isWishlisted ? 'bg-red-500 border-red-500 text-white' : 'border-border hover:border-primary'}`}
               >
                 <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isWishlisted ? 'fill-current' : ''}`} />

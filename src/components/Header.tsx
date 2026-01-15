@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, Heart, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const Header = () => {
@@ -9,6 +10,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
   const { totalItems } = useCart();
+  const { totalItems: wishlistItems } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -126,9 +128,17 @@ const Header = () => {
             <button className="p-2 hover:bg-secondary rounded-full transition-colors hidden sm:block">
               <Search size={20} className="text-foreground/70" />
             </button>
-            <button className="p-2 hover:bg-secondary rounded-full transition-colors hidden sm:block">
+            <Link
+              to="/wishlist"
+              className="p-2 hover:bg-secondary rounded-full transition-colors hidden sm:block relative"
+            >
               <Heart size={20} className="text-foreground/70" />
-            </button>
+              {wishlistItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold animate-scale-in">
+                  {wishlistItems}
+                </span>
+              )}
+            </Link>
             <Link
               to="/cart"
               className="p-2 hover:bg-secondary rounded-full transition-colors relative"

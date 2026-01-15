@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import headphoneImg from "@/assets/headphone.png";
@@ -102,11 +103,11 @@ const AllProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Featured");
   const [priceRange, setPriceRange] = useState([0, 500]);
-  const [wishlist, setWishlist] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -142,10 +143,14 @@ const AllProducts = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const toggleWishlist = (id: number) => {
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+  const handleToggleWishlist = (product: typeof allProducts[0]) => {
+    toggleWishlist({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: headphoneImg,
+      category: product.category,
+    });
   };
 
   const handleAddToCart = (product: (typeof allProducts)[0]) => {
@@ -454,15 +459,15 @@ const AllProducts = () => {
                       {/* Quick Actions */}
                       <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => toggleWishlist(product.id)}
+                          onClick={() => handleToggleWishlist(product)}
                           className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                            wishlist.includes(product.id)
+                            isInWishlist(product.id)
                               ? "bg-red-500 text-white"
                               : "bg-card/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground"
                           }`}
                         >
                           <Heart
-                            className={`w-5 h-5 ${wishlist.includes(product.id) ? "fill-current" : ""}`}
+                            className={`w-5 h-5 ${isInWishlist(product.id) ? "fill-current" : ""}`}
                           />
                         </button>
                       </div>
