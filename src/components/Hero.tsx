@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import headphoneImg from "@/assets/headphone.png";
 import heroPersonImg from "@/assets/hero-person.png";
 
@@ -21,13 +22,16 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              <button className="group flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold shadow-glow hover:scale-105 transition-all duration-300">
+              <Link
+                to="/explore"
+                className="group flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold shadow-glow hover:scale-105 transition-all duration-300"
+              >
                 Explore More
                 <ArrowRight
                   size={18}
                   className="group-hover:translate-x-1 transition-transform"
                 />
-              </button>
+              </Link>
 
               {/* Discount Badge */}
               <div className="relative animate-pulse-glow rounded-full">
