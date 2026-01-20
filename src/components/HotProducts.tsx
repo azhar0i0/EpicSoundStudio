@@ -12,35 +12,35 @@ const products = [
     name: "Unique Headphone",
     price: 20.5,
     rating: 5,
-    bgColor: "bg-yellow-200",
+    bgColor: "bg-amber-100",
   },
   {
     id: 2,
     name: "Colored Headphones",
     price: 36.5,
     rating: 5,
-    bgColor: "bg-pink-200",
+    bgColor: "bg-rose-100",
   },
   {
     id: 3,
     name: "Modern Headphone",
     price: 24.0,
     rating: 5,
-    bgColor: "bg-gray-200",
+    bgColor: "bg-slate-100",
   },
   {
     id: 4,
     name: "Classic Headphone",
     price: 28.0,
     rating: 5,
-    bgColor: "bg-blue-200",
+    bgColor: "bg-sky-100",
   },
   {
     id: 5,
     name: "Pro Headphone",
     price: 45.0,
     rating: 5,
-    bgColor: "bg-green-200",
+    bgColor: "bg-emerald-100",
   },
 ];
 
@@ -82,9 +82,7 @@ const HotProducts = () => {
       price: product.price,
       image: headphoneImg,
     });
-    toast.success(`${product.name} added to cart!`, {
-      duration: 2000,
-    });
+    toast.success(`${product.name} added to cart`);
   };
 
   const visibleProducts = products.slice(
@@ -93,41 +91,43 @@ const HotProducts = () => {
   );
 
   return (
-    <section ref={ref} className="py-16 lg:py-24 bg-sand/30" id="products">
+    <section ref={ref} className="py-20 lg:py-28 bg-muted/30" id="products">
       <div className="container-custom">
         {/* Header */}
         <div
-          className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          className={`flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-14 transition-all duration-500 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-            The Market Provides
-            <br />
-            Hot <span className="text-accent">Products</span>
-          </h2>
-          <div className="flex items-center gap-3">
+          <div>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold leading-[1.15] tracking-tight">
+              The Market Provides
+              <br />
+              Hot <span className="text-accent">Products</span>
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={prevSlide}
               disabled={currentIndex === 0}
-              className="w-12 h-12 rounded-full border-2 border-accent text-accent flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-accent"
+              className="w-10 h-10 rounded-md border border-border text-muted-foreground flex items-center justify-center hover:border-accent hover:text-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-muted-foreground"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
             </button>
             <button
               onClick={nextSlide}
               disabled={currentIndex >= maxIndex}
-              className="w-12 h-12 rounded-full bg-accent text-accent-foreground flex items-center justify-center hover:scale-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-10 h-10 rounded-md bg-accent text-accent-foreground flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         </div>
 
-        {/* Products Grid - Matching Reference Design */}
+        {/* Products Grid */}
         <div className="overflow-hidden">
           <div
-            className="grid gap-8 lg:gap-12"
+            className="grid gap-8 lg:gap-10"
             style={{
               gridTemplateColumns: `repeat(${itemsPerPage}, 1fr)`,
             }}
@@ -135,27 +135,23 @@ const HotProducts = () => {
             {visibleProducts.map((product, index) => (
               <div
                 key={product.id}
-                className={`group text-center transition-all duration-700 ease-out ${
+                className={`group text-center transition-all duration-500 ${
                   isVisible
-                    ? "opacity-100 translate-y-0 scale-100"
-                    : "opacity-0 translate-y-16 scale-95"
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-8"
                 }`}
-                style={{ transitionDelay: `${(index + 1) * 150}ms` }}
+                style={{ transitionDelay: `${(index + 1) * 100}ms` }}
               >
                 {/* Product Image - Circular Background */}
-                <div className="relative mb-6 flex justify-center perspective-1000">
+                <div className="relative mb-6 flex justify-center">
                   <div
-                    className={`relative w-48 h-48 lg:w-56 lg:h-56 ${product.bgColor} rounded-full flex items-center justify-center transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-accent/20`}
+                    className={`relative w-44 h-44 lg:w-52 lg:h-52 ${product.bgColor} rounded-full flex items-center justify-center transition-all duration-300 group-hover:shadow-lg`}
                   >
-                    {/* Animated ring on hover */}
-                    <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-accent/30 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
-                    <div className="absolute inset-2 rounded-full border-2 border-transparent group-hover:border-accent/20 transition-all duration-700 group-hover:scale-105 group-hover:-rotate-6" />
-                    
                     <Link to={`/product/${product.id}`} className="relative z-10">
                       <img
                         src={headphoneImg}
                         alt={product.name}
-                        className="w-36 lg:w-44 object-contain transition-all duration-700 ease-out drop-shadow-[0_15px_30px_rgba(0,0,0,0.15)] group-hover:scale-115 group-hover:rotate-12 group-hover:drop-shadow-[0_25px_50px_rgba(0,0,0,0.25)]"
+                        className="w-32 lg:w-40 object-contain transition-transform duration-300 drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)] group-hover:scale-105"
                       />
                     </Link>
                   </div>
@@ -163,38 +159,37 @@ const HotProducts = () => {
 
                 {/* Product Info */}
                 <Link to={`/product/${product.id}`}>
-                  <h3 className="font-semibold text-lg mb-2 hover:text-accent transition-all duration-300 group-hover:scale-105">
+                  <h3 className="font-semibold text-base mb-2 hover:text-accent transition-colors">
                     {product.name}
                   </h3>
                 </Link>
 
                 {/* Rating */}
-                <div className="flex justify-center gap-0.5 mb-3 transition-transform duration-500 group-hover:scale-110">
+                <div className="flex justify-center gap-0.5 mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      size={14}
-                      className={`transition-all duration-300 ${
+                      size={12}
+                      className={
                         i < product.rating
                           ? "fill-accent text-accent"
                           : "text-muted"
-                      }`}
-                      style={{ transitionDelay: `${i * 50}ms` }}
+                      }
                     />
                   ))}
                 </div>
 
                 {/* Price and Add to Cart */}
-                <div className="flex items-center justify-center gap-4 transition-all duration-500 group-hover:gap-5">
-                  <span className="text-xl font-bold transition-all duration-300 group-hover:text-accent group-hover:scale-110">
+                <div className="flex items-center justify-center gap-4">
+                  <span className="text-lg font-semibold">
                     ${product.price.toFixed(2)}
                   </span>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 hover:scale-110 hover:shadow-glow active:scale-95 group-hover:px-5"
+                    className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-md text-xs font-medium transition-opacity hover:opacity-90"
                   >
                     Add To Cart
-                    <ShoppingCart size={14} className="transition-transform duration-300 group-hover:rotate-12" />
+                    <ShoppingCart size={12} />
                   </button>
                 </div>
               </div>
@@ -203,10 +198,10 @@ const HotProducts = () => {
         </div>
 
         {/* View All Link */}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-12">
           <Link
             to="/products"
-            className="text-accent hover:underline font-medium"
+            className="text-muted-foreground hover:text-accent transition-colors text-sm font-medium"
           >
             View All Products →
           </Link>
