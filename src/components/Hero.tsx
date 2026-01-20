@@ -5,18 +5,18 @@ import heroPersonImg from "@/assets/hero-person.png";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-cream via-background to-sand overflow-hidden pt-24 lg:pt-32">
+    <section className="relative min-h-[90vh] bg-background overflow-hidden pt-28 lg:pt-36">
       <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[70vh]">
           {/* Left Content */}
           <div className="relative z-20 animate-slide-right">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] font-semibold leading-[1.1] mb-6 tracking-tight">
               Unveiling{" "}
               <span className="text-accent">Headphone</span>
               <br />
               Wonders
             </h1>
-            <p className="text-muted-foreground text-base sm:text-lg max-w-md mb-8 leading-relaxed">
+            <p className="text-muted-foreground text-base sm:text-lg max-w-md mb-10 leading-relaxed">
               Epic-Sound provides a meticulously curated collection of headphones
               that redefine the audio experience. Immerse yourself in rich sound.
             </p>
@@ -24,26 +24,24 @@ const Hero = () => {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 to="/explore"
-                className="group flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold shadow-glow hover:scale-105 transition-all duration-300"
+                className="group flex items-center gap-2.5 bg-accent text-accent-foreground px-7 py-3.5 rounded-lg font-medium hover:opacity-90 transition-opacity duration-200"
               >
                 Explore More
                 <ArrowRight
-                  size={18}
-                  className="group-hover:translate-x-1 transition-transform"
+                  size={17}
+                  className="group-hover:translate-x-0.5 transition-transform duration-200"
                 />
               </Link>
 
               {/* Discount Badge */}
-              <div className="relative animate-pulse-glow rounded-full">
-                <div className="bg-accent text-accent-foreground px-4 py-2 rounded-full font-bold text-sm">
-                  30% OFF
-                </div>
+              <div className="bg-peach text-foreground px-5 py-2.5 rounded-lg font-semibold text-sm">
+                30% OFF
               </div>
             </div>
 
             {/* Limited Demo Tag */}
-            <div className="mt-12 hidden sm:block">
-              <span className="inline-block bg-peach text-foreground px-6 py-2 rounded-full text-sm font-medium">
+            <div className="mt-14 hidden sm:block">
+              <span className="inline-block border border-border text-muted-foreground px-5 py-2 rounded-md text-sm font-medium">
                 Limited Demo
               </span>
             </div>
@@ -51,61 +49,46 @@ const Hero = () => {
 
           {/* Right Content - Headphone */}
           <div className="relative flex justify-center items-center">
-            {/* Circular Glow Background - lighter for black headphone */}
-            <div className="absolute w-72 h-72 sm:w-96 sm:h-96 lg:w-[500px] lg:h-[500px] rounded-full bg-gradient-to-br from-cream via-secondary to-sand opacity-90" />
-            <div className="absolute w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full bg-secondary/80" />
+            {/* Circular Background - Subtle */}
+            <div className="absolute w-72 h-72 sm:w-80 sm:h-80 lg:w-[420px] lg:h-[420px] rounded-full bg-secondary/60" />
 
             {/* Main Headphone Image */}
             <img
               src={headphoneImg}
               alt="Premium wireless headphone"
-              className="relative z-10 w-64 sm:w-80 lg:w-[400px] animate-float drop-shadow-[0_25px_50px_rgba(0,0,0,0.3)]"
+              className="relative z-10 w-56 sm:w-72 lg:w-[340px] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
             />
 
             {/* Small Headphone Thumbnails */}
-            <div className="absolute bottom-4 right-0 lg:right-8 flex gap-2 animate-slide-up delay-500">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-secondary rounded-xl p-2 shadow-soft hover:scale-110 transition-transform cursor-pointer">
-                <img
-                  src={headphoneImg}
-                  alt="Headphone variant"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-secondary rounded-xl p-2 shadow-soft hover:scale-110 transition-transform cursor-pointer">
-                <img
-                  src={headphoneImg}
-                  alt="Headphone variant"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-secondary rounded-xl p-2 shadow-soft hover:scale-110 transition-transform cursor-pointer">
-                <img
-                  src={headphoneImg}
-                  alt="Headphone variant"
-                  className="w-full h-full object-contain"
-                />
-              </div>
+            <div className="absolute bottom-8 right-0 lg:right-12 flex gap-2.5 animate-slide-up delay-300">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="w-12 h-12 sm:w-14 sm:h-14 bg-card border border-border rounded-lg p-2 hover:border-accent/50 transition-colors cursor-pointer"
+                >
+                  <img
+                    src={headphoneImg}
+                    alt="Headphone variant"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Hero Person */}
-        <div className="absolute bottom-0 left-0 sm:left-8 z-30 hidden sm:block animate-slide-up delay-300">
+        <div className="absolute bottom-0 left-0 sm:left-12 z-30 hidden sm:block animate-slide-up delay-200">
           <div className="relative">
-            <div className="absolute -inset-4 bg-peach rounded-full blur-2xl opacity-60" />
+            <div className="absolute -inset-6 bg-peach/40 rounded-full blur-2xl" />
             <img
               src={heroPersonImg}
               alt="Person with headphones"
-              className="relative w-32 lg:w-48 xl:w-56 object-contain"
+              className="relative w-28 lg:w-40 xl:w-48 object-contain"
             />
           </div>
         </div>
       </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute top-1/4 left-10 w-4 h-4 bg-accent rounded-full animate-bounce-subtle opacity-60" />
-      <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-primary rounded-full animate-bounce-subtle delay-300 opacity-60" />
-      <div className="absolute bottom-1/4 right-10 w-5 h-5 bg-accent/50 rounded-full animate-bounce-subtle delay-500 opacity-60" />
     </section>
   );
 };
