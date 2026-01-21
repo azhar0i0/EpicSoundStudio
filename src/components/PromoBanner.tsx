@@ -9,7 +9,7 @@ const PromoBanner = () => {
   return (
     <section
       ref={ref}
-      className="py-20 lg:py-28 overflow-hidden"
+      className="py-16 sm:py-20 lg:py-28 overflow-hidden"
     >
       <div className="container-custom">
         <div
@@ -20,30 +20,30 @@ const PromoBanner = () => {
           {/* Background */}
           <div className="absolute inset-0 bg-primary" />
 
-          <div className="relative z-10 grid lg:grid-cols-2 gap-10 p-8 lg:p-14 items-center">
+          <div className="relative z-10 grid md:grid-cols-2 gap-6 sm:gap-10 p-6 sm:p-8 lg:p-14 items-center">
             {/* Headphone */}
-            <div className="relative flex justify-center order-1 lg:order-none">
+            <div className="relative flex justify-center order-1 md:order-none">
               <img
                 src={headphoneImg}
                 alt="Premium headphone"
-                className="w-40 lg:w-60 object-contain animate-float-slow drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] brightness-105"
+                className="w-32 sm:w-40 lg:w-60 object-contain animate-float-slow drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] brightness-105"
               />
             </div>
 
             {/* Content */}
-            <div className="text-primary-foreground">
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold leading-[1.15] mb-5 tracking-tight">
+            <div className="text-primary-foreground text-center md:text-left">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-semibold leading-[1.15] mb-4 sm:mb-5 tracking-tight">
                 Musical Sound,
                 <br />
                 Stylish Quality
               </h2>
-              <p className="text-primary-foreground/75 mb-8 max-w-md leading-relaxed text-sm">
+              <p className="text-primary-foreground/75 mb-6 sm:mb-8 max-w-md mx-auto md:mx-0 leading-relaxed text-xs sm:text-sm">
                 Discover our latest collection of premium headphones designed for
                 those who appreciate exceptional audio quality and timeless design.
               </p>
               <Link
                 to="/explore"
-                className="group inline-flex items-center gap-2.5 bg-accent text-accent-foreground px-7 py-3.5 rounded-md font-medium hover:opacity-90 transition-opacity"
+                className="group inline-flex items-center gap-2 sm:gap-2.5 bg-accent text-accent-foreground px-5 sm:px-7 py-3 sm:py-3.5 rounded-md font-medium text-sm hover:opacity-90 transition-opacity"
               >
                 Explore More
                 <ArrowRight
