@@ -1,14 +1,22 @@
 import { useState, useEffect } from "react";
-import { Search, Heart, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
+import { Search, Heart, ShoppingCart, Menu, ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { totalItems } = useCart();
   const { totalItems: wishlistItems } = useWishlist();
   const location = useLocation();
@@ -139,33 +147,78 @@ const Header = () => {
             </Link>
 
             {/* Mobile menu button */}
-            <button
-              className="lg:hidden p-2.5 hover:bg-muted rounded-md transition-colors ml-1"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+              <SheetTrigger asChild>
+                <button className="lg:hidden p-2.5 hover:bg-muted rounded-md transition-colors ml-1">
+                  <Menu size={20} />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] p-0">
+                <SheetHeader className="p-6 border-b border-border">
+                  <SheetTitle className="font-display text-xl font-semibold tracking-tight text-left">
+                    Epic-Sound
+                  </SheetTitle>
+                </SheetHeader>
+                <nav className="p-4">
+                  <ul className="space-y-1">
+                    {navItems.map((item) => (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          onClick={(e) => {
+                            handleNavClick(e, item.href);
+                            setMobileNavOpen(false);
+                          }}
+                          className="flex items-center gap-3 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors font-medium py-3 px-4 rounded-lg text-sm"
+                        >
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  {/* Mobile Search */}
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-muted rounded-lg">
+                      <Search size={18} className="text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Search products...</span>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile Quick Links */}
+                  <div className="mt-6 space-y-1">
+                    <Link
+                      to="/wishlist"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors font-medium py-3 px-4 rounded-lg text-sm"
+                    >
+                      <Heart size={18} />
+                      Wishlist
+                      {wishlistItems > 0 && (
+                        <span className="ml-auto bg-destructive text-destructive-foreground text-xs px-2 py-0.5 rounded-full">
+                          {wishlistItems}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      to="/cart"
+                      onClick={() => setMobileNavOpen(false)}
+                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors font-medium py-3 px-4 rounded-lg text-sm"
+                    >
+                      <ShoppingCart size={18} />
+                      Cart
+                      {totalItems > 0 && (
+                        <span className="ml-auto bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">
+                          {totalItems}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 p-4 bg-background border border-border rounded-lg shadow-medium animate-scale-in">
-            <ul className="space-y-1">
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    to={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    className="block text-muted-foreground hover:text-foreground hover:bg-muted transition-colors font-medium py-2.5 px-3 rounded-md text-sm"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </header>
   );

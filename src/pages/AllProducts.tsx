@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Search,
   X,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -17,6 +18,16 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import headphoneImg from "@/assets/headphone.png";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
 
 // Generate 50 demo products
 const generateProducts = () => {
@@ -106,8 +117,33 @@ const AllProducts = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [tempPriceRange, setTempPriceRange] = useState([0, 500]);
+  const [tempCategory, setTempCategory] = useState("All");
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+
+  // Sync temp filters with actual filters when drawer opens
+  useEffect(() => {
+    if (mobileFilterOpen) {
+      setTempPriceRange(priceRange);
+      setTempCategory(selectedCategory);
+    }
+  }, [mobileFilterOpen, priceRange, selectedCategory]);
+
+  const applyMobileFilters = () => {
+    setPriceRange(tempPriceRange);
+    setSelectedCategory(tempCategory);
+    setMobileFilterOpen(false);
+  };
+
+  const clearAllFilters = () => {
+    setTempPriceRange([0, 500]);
+    setTempCategory("All");
+    setPriceRange([0, 500]);
+    setSelectedCategory("All");
+    setSearchQuery("");
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -236,10 +272,8 @@ const AllProducts = () => {
 
       <section className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <aside
-            className={`lg:w-72 space-y-6 ${showFilters ? "block" : "hidden lg:block"}`}
-          >
+          {/* Sidebar Filters - Desktop */}
+          <aside className="hidden lg:block lg:w-72 space-y-6">
             <div className="bg-card rounded-2xl p-6 border border-border sticky top-24">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <Filter className="w-5 h-5" />
@@ -269,6 +303,16 @@ const AllProducts = () => {
               {/* Price Range */}
               <div className="mb-6">
                 <h4 className="font-medium mb-3">Price Range</h4>
+                <div className="px-2 mb-4">
+                  <Slider
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    max={500}
+                    min={0}
+                    step={10}
+                    className="w-full"
+                  />
+                </div>
                 <div className="flex items-center gap-4">
                   <input
                     type="number"
@@ -322,17 +366,132 @@ const AllProducts = () => {
           {/* Products Grid */}
           <div className="flex-1">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 bg-card rounded-2xl p-4 border border-border">
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="lg:hidden shrink-0"
-                  onClick={() => setShowFilters(!showFilters)}
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filters
-                </Button>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-card rounded-2xl p-3 sm:p-4 border border-border">
+              <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                {/* Mobile Filter Drawer */}
+                <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="lg:hidden shrink-0"
+                    >
+                      <SlidersHorizontal className="w-4 h-4 mr-2" />
+                      Filters
+                      {(selectedCategory !== "All" || priceRange[0] > 0 || priceRange[1] < 500) && (
+                        <span className="ml-1.5 w-5 h-5 bg-primary text-primary-foreground rounded-full text-xs flex items-center justify-center">
+                          {(selectedCategory !== "All" ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < 500 ? 1 : 0)}
+                        </span>
+                      )}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-[320px] p-0 flex flex-col">
+                    <SheetHeader className="p-5 border-b border-border">
+                      <SheetTitle className="flex items-center gap-2 text-left">
+                        <SlidersHorizontal className="w-5 h-5" />
+                        Filters
+                      </SheetTitle>
+                    </SheetHeader>
+                    
+                    <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                      {/* Categories */}
+                      <div>
+                        <h4 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wide">Category</h4>
+                        <div className="space-y-1">
+                          {categories.map((cat) => (
+                            <button
+                              key={cat}
+                              onClick={() => setTempCategory(cat)}
+                              className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm ${
+                                tempCategory === cat
+                                  ? "bg-primary text-primary-foreground font-medium"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Price Range */}
+                      <div>
+                        <h4 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wide">Price Range</h4>
+                        <div className="px-2 mb-4">
+                          <Slider
+                            value={tempPriceRange}
+                            onValueChange={setTempPriceRange}
+                            max={500}
+                            min={0}
+                            step={10}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Min</label>
+                            <input
+                              type="number"
+                              value={tempPriceRange[0]}
+                              onChange={(e) =>
+                                setTempPriceRange([Number(e.target.value), tempPriceRange[1]])
+                              }
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                            />
+                          </div>
+                          <span className="text-muted-foreground mt-5">—</span>
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Max</label>
+                            <input
+                              type="number"
+                              value={tempPriceRange[1]}
+                              onChange={(e) =>
+                                setTempPriceRange([tempPriceRange[0], Number(e.target.value)])
+                              }
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sort Options in Mobile */}
+                      <div>
+                        <h4 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wide">Sort By</h4>
+                        <div className="space-y-1">
+                          {sortOptions.map((option) => (
+                            <button
+                              key={option}
+                              onClick={() => setSortBy(option)}
+                              className={`w-full text-left px-4 py-2.5 rounded-lg transition-all text-sm ${
+                                sortBy === option
+                                  ? "bg-primary text-primary-foreground font-medium"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <SheetFooter className="p-5 border-t border-border gap-2 flex-row">
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={clearAllFilters}
+                      >
+                        Clear All
+                      </Button>
+                      <Button
+                        className="flex-1"
+                        onClick={applyMobileFilters}
+                      >
+                        Apply Filters
+                      </Button>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
 
                 {/* Search Input */}
                 <div className="relative flex-1 max-w-md">
@@ -341,8 +500,8 @@ const AllProducts = () => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products..."
-                    className="w-full pl-10 pr-10 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                    placeholder="Search..."
+                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   />
                   {searchQuery && (
                     <button
@@ -358,13 +517,13 @@ const AllProducts = () => {
                   <span className="text-foreground font-medium">
                     {filteredProducts.length}
                   </span>{" "}
-                  products found
+                  products
                 </span>
               </div>
 
-              <div className="flex items-center gap-4">
-                {/* Sort Dropdown */}
-                <div className="relative">
+              <div className="flex items-center gap-2 sm:gap-4">
+                {/* Sort Dropdown - Desktop only */}
+                <div className="relative hidden lg:block">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -385,13 +544,13 @@ const AllProducts = () => {
                     onClick={() => setViewMode("grid")}
                     className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                   >
-                    <Grid className="w-5 h-5" />
+                    <Grid className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
                     className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                   >
-                    <List className="w-5 h-5" />
+                    <List className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
